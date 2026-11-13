@@ -169,7 +169,16 @@ class ExternalBrowser {
       return _openOAuthDefault(authUrl, callbackUrlScheme: callbackUrlScheme);
     }
     if (Platform.isWindows) {
-      return _openOAuthDefault(authUrl, callbackUrlScheme: callbackUrlScheme);
+      // The loopback callback (http://localhost:{port}) only works with
+      // flutter_web_auth_2's server mode. Its default webview mode matches the
+      // callback by `uri.scheme == callbackUrlScheme` ("http" vs
+      // "http://localhost:48765"), which never matches, so the WebView2 window
+      // just navigates to the dead loopback URL (ERR_CONNECTION_REFUSED).
+      return _openOAuthDefault(
+        authUrl,
+        callbackUrlScheme: callbackUrlScheme,
+        useWebview: false,
+      );
     }
     return _openOAuthDefault(authUrl, callbackUrlScheme: callbackUrlScheme);
   }
@@ -225,11 +234,15 @@ class ExternalBrowser {
   static Future<Uri?> _openOAuthDefault(
     String authUrl, {
     required String callbackUrlScheme,
+    bool? useWebview,
   }) async {
     return Uri.parse(
       await FlutterWebAuth2.authenticate(
         url: authUrl,
         callbackUrlScheme: callbackUrlScheme,
+        options: useWebview == null
+            ? const FlutterWebAuth2Options()
+            : FlutterWebAuth2Options(useWebview: useWebview),
       ),
     );
   }
