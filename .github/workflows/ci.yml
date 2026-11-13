@@ -297,7 +297,7 @@ jobs:
         run: flutter pub get
 
       - name: Build debug Windows
-        run: flutter build windows --debug
+        run: flutter build windows --release
 
       - name: Upload Windows debug artifact
         uses: actions/upload-artifact@v4.6.2
