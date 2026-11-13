@@ -303,7 +303,7 @@ jobs:
         uses: actions/upload-artifact@v4.6.2
         with:
           name: Mangayomi-windows-debug
-          path: build/windows/x64/runner/Debug/
+          path: build/windows/x64/runner/Release/
 
   build-linux:
     name: Build (Linux debug)
